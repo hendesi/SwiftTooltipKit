@@ -66,7 +66,7 @@ public extension UIView {
     
     func tooltip(_ view: UIView, orientation: Tooltip.TipOrientation, configuration: Tooltip.ToolTipConfiguration = Tooltip.ToolTipConfiguration()) {
         guard !hasActiveTooltip else { return }
-        let toolTip = Tooltip(view: view, presentingView: self, configuration: configuration, orientation: orientation)
+        let toolTip = Tooltip(view: view, presentingView: self, orientation: orientation, configuration: configuration)
         
         UIApplication.shared.keyWindow?.addSubview(toolTip)
     }
@@ -80,8 +80,8 @@ public extension UIView {
         label.numberOfLines = 0
         label.text = text
         label.preferredMaxLayoutWidth = 150
-        
-        let toolTip = Tooltip(view: label, presentingView: self, configuration: configuration, orientation: orientation)
+
+        let toolTip = Tooltip(view: label, presentingView: self, orientation: orientation, configuration: configuration)
         
         UIApplication.shared.keyWindow?.addSubview(toolTip)
     }

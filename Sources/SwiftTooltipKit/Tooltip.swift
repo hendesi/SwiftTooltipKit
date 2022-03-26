@@ -104,19 +104,33 @@ public class Tooltip: UIView {
         orientation == .left || orientation == .right
     }
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    public convenience init(view: UIView, presentingView: UIView, orientation: TipOrientation, configuration: ((ToolTipConfiguration) -> ToolTipConfiguration)) {
+        self.init(view: view, presentingView: presentingView, orientation: orientation)
+        self.configuration = configuration(ToolTipConfiguration())
+        
+        setup()
     }
     
-    public convenience init(view: UIView, presentingView: UIView, configuration: ToolTipConfiguration = ToolTipConfiguration(), orientation: TipOrientation) {
-        self.init(frame: .zero)
+    public convenience init(view: UIView, presentingView: UIView, orientation: TipOrientation, configuration: ToolTipConfiguration = ToolTipConfiguration()) {
+        self.init(view: view, presentingView: presentingView, orientation: orientation)
+        self.configuration = configuration
         
+        setup()
+    }
+    
+    fileprivate init(view: UIView, presentingView: UIView, orientation: TipOrientation) {
         self.orientation = orientation
         self.contentView = view
         self.presentingView = presentingView
-        self.configuration = configuration
         
-        
+        super.init(frame: .zero)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented. Use convenience init instead.")
+    }
+    
+    private func setup() {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(contentView)
         contentView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
@@ -140,11 +154,6 @@ public class Tooltip: UIView {
         
         setNeedsLayout()
         layoutIfNeeded()
-        
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     private func computeFrame() {
@@ -352,12 +361,12 @@ public class Tooltip: UIView {
             withDuration: configuration.animationConfiguration.animationDuration,
             delay: configuration.animationConfiguration.animationDelay,
             options: configuration.animationConfiguration.animationOptions,
-            animations: { [unowned self] in
-                self.alpha = 0
+            animations: { [weak self] in
+                self?.alpha = 0
             },
-            completion: { [unowned self] _ in
-                self.isHidden = true
-                self.removeFromSuperview()
+            completion: { [weak self] _ in
+                self?.isHidden = true
+                self?.removeFromSuperview()
             }
         )
     }
