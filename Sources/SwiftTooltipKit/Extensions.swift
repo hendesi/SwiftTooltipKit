@@ -74,12 +74,12 @@ public extension UIView {
     func tooltip(_ text: String, orientation: Tooltip.TipOrientation, configuration: Tooltip.ToolTipConfiguration = Tooltip.ToolTipConfiguration()) {
         guard !hasActiveTooltip else { return }
         let label = UILabel()
-        label.textAlignment = .center
-        label.textColor = .white
-        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.textAlignment = configuration.labelConfiguration.textAlignment
+        label.textColor = configuration.labelConfiguration.textColor
+        label.font = configuration.labelConfiguration.font
         label.numberOfLines = 0
         label.text = text
-        label.preferredMaxLayoutWidth = 150
+        label.preferredMaxLayoutWidth = configuration.labelConfiguration.preferredMaxLayoutWidth
 
         let toolTip = Tooltip(view: label, presentingView: self, orientation: orientation, configuration: configuration)
         

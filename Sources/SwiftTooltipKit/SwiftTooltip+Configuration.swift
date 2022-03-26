@@ -23,6 +23,7 @@
 
 #if canImport(UIKit)
 import UIKit
+import SwiftUI
 
 extension Tooltip {
     public class ToolTipConfiguration {
@@ -39,6 +40,8 @@ extension Tooltip {
         public var animationConfiguration: AnimationConfiguration = AnimationConfiguration()
         
         public var shadowConfiguration: ShadowConfiguration = ShadowConfiguration()
+        
+        public var labelConfiguration: LabelConfiguration = LabelConfiguration()
         
         public var dismissAutomatically: Bool = true
         
@@ -61,6 +64,16 @@ extension Tooltip {
         public var animationDelay: CGFloat = 0.0
         
         public var animationOptions: UIView.AnimationOptions = [.curveEaseOut]
+    }
+    
+    public class LabelConfiguration {
+        public var textAlignment: NSTextAlignment = .center
+        
+        public var textColor: UIColor = .white
+        
+        public var font: UIFont = .systemFont(ofSize: 14, weight: .medium)
+        
+        public var preferredMaxLayoutWidth: CGFloat = 150
     }
 }
 
