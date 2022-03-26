@@ -37,8 +37,6 @@ public class Tooltip: UIView {
     
     public private(set) var contentView: UIView!
     
-    private var embeddedView: UIView!
-    
     private var presentingViewFrame: CGRect {
         guard let presentingView = presentingView else { return .zero }
         return presentingView.convert(presentingView.bounds, to: UIApplication.getTopViewController()!.view)
@@ -110,13 +108,12 @@ public class Tooltip: UIView {
         super.init(frame: frame)
     }
     
-    public convenience init(view: UIView, embeddedView: UIView, configuration: ToolTipConfiguration = ToolTipConfiguration(), orientation: TipOrientation) {
+    public convenience init(view: UIView, presentingView: UIView, configuration: ToolTipConfiguration = ToolTipConfiguration(), orientation: TipOrientation) {
         self.init(frame: .zero)
         
         self.orientation = orientation
         self.contentView = view
-        self.embeddedView = embeddedView
-        self.presentingView = embeddedView
+        self.presentingView = presentingView
         self.configuration = configuration
         
         
@@ -130,11 +127,7 @@ public class Tooltip: UIView {
         contentView.setNeedsLayout()
         contentView.layoutIfNeeded()
         
-        backgroundColor = .darkGray
-        
-        if configuration.alignBackgroundColorWithViewColor {
-            view.backgroundColor = .darkGray
-        }
+        backgroundColor = configuration.backgroundColor
         
         // animate showing
         alpha = 0
@@ -149,14 +142,14 @@ public class Tooltip: UIView {
         layoutIfNeeded()
         
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     private func computeFrame() {
         let viewSize = contentView.boundsOrIntrinsicContentSize
-
+        
         let origin: CGPoint
         switch orientation {
         case .top:
@@ -177,8 +170,6 @@ public class Tooltip: UIView {
         let screenBounds = UIScreen.main.bounds
         let globlSafeAreasInsets = UIApplication.shared.keyWindow!.safeAreaInsets
         let margin: CGFloat = 16
-        
-        var mutableOrientation = orientation
         
         precondition(rect.width <= screenBounds.width - margin*2, warningMsg())
         precondition(rect.height <= screenBounds.height - margin*2 - globlSafeAreasInsets.top - globlSafeAreasInsets.bottom, warningMsg())
@@ -262,29 +253,21 @@ public class Tooltip: UIView {
     
     private func handleAutomaticDismissalIfNedded() {
         guard configuration.dismissAutomatically else { return }
-        Timer.scheduledTimer(withTimeInterval: configuration.timeToDimiss, repeats: false, block: { [weak self] _ in
-            self?.dismiss()
+        Timer.scheduledTimer(withTimeInterval: configuration.timeToDimiss, repeats: false, block: { [unowned self] _ in
+            self.dismiss()
         })
-    }
-    
-    private func alignColorsIfNeeded() {
-        if configuration.alignBackgroundColorWithViewColor {
-            backgroundColor = configuration.backgroundColor
-        } else {
-            presentingView?.backgroundColor = backgroundColor
-        }
     }
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-
+        
         contentView.layoutIfNeeded()
         
         computeFrame()
         drawToolTip(self.bounds)
         print(contentView.intrinsicContentSize)
     }
-
+    
     private func drawToolTip(_ rect :CGRect) {
         let inset = configuration.inset
         let roundRect = CGRect(x: rect.minX - inset, y: rect.minY - inset, width: rect.width + inset * 2, height: rect.height + inset * 2)
@@ -293,7 +276,7 @@ public class Tooltip: UIView {
         let trianglePath = drawTip(rect)
         roundRectBez.append(trianglePath)
         roundRectBez.lineWidth = 2
-
+        
         let shape = createShapeLayer(roundRectBez.cgPath)
         self.layer.insertSublayer(shape, at: 0)
     }
@@ -348,56 +331,56 @@ public class Tooltip: UIView {
             tipPath.addLine(to: CGPoint(x: rect.minX - tipSize.height, y: yValueCenter ))
             tipPath.addLine(to: CGPoint(x: rect.minX - inset, y: yValueCenter - tipSize.height/2 ))
         }
-
+        
         tipPath.close()
         return tipPath
     }
-
+    
     func createShapeLayer(_ path : CGPath) -> CAShapeLayer {
-       let shape = CAShapeLayer()
-       shape.path = path
-       shape.fillColor = UIColor.darkGray.cgColor
-       shape.shadowColor = UIColor.black.withAlphaComponent(0.60).cgColor
-       shape.shadowOffset = CGSize(width: 0, height: 2)
-       shape.shadowRadius = 5.0
-       shape.shadowOpacity = 0.8
-       return shape
+        let shape = CAShapeLayer()
+        shape.path = path
+        shape.fillColor = configuration.backgroundColor.cgColor
+        shape.shadowColor = configuration.shadowConfiguration.shadowColor
+        shape.shadowOffset = configuration.shadowConfiguration.shadowOffset
+        shape.shadowRadius = configuration.cornerRadius
+        shape.shadowOpacity = configuration.shadowConfiguration.shadowOpacity
+        return shape
     }
     
     private func dismiss() {
         UIView.animate(
-            withDuration: configuration.animationDuration,
-            delay: configuration.animationDelay,
-            options: configuration.animationOptions,
-            animations: { [weak self] in
-                self?.alpha = 0
+            withDuration: configuration.animationConfiguration.animationDuration,
+            delay: configuration.animationConfiguration.animationDelay,
+            options: configuration.animationConfiguration.animationOptions,
+            animations: { [unowned self] in
+                self.alpha = 0
             },
-            completion: { [weak self] _ in
-                self?.isHidden = true
-                self?.removeFromSuperview()
+            completion: { [unowned self] _ in
+                self.isHidden = true
+                self.removeFromSuperview()
             }
         )
     }
     
     private func show() {
         UIView.animate(
-            withDuration: configuration.animationDuration,
-            delay: configuration.animationDelay,
-            options: configuration.animationOptions,
-            animations: { [weak self] in
-                self?.alpha = 1
+            withDuration: configuration.animationConfiguration.animationDuration,
+            delay: configuration.animationConfiguration.animationDelay,
+            options: configuration.animationConfiguration.animationOptions,
+            animations: { [unowned self] in
+                self.alpha = 1
             }
         )
     }
     
     private func warningMsg() -> String {
-       """
+        """
             LAYOUT ERROR:
         
             It seems that the view displayed as a tooltip is too large!
             Please make sure that size of the tooltip is valid and try again.
         """
-       
+        
     }
     
     public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {

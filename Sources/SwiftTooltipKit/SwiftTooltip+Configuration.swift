@@ -28,8 +28,6 @@ extension Tooltip {
     public class ToolTipConfiguration {
         public var backgroundColor: UIColor = .darkGray
         
-        public var alignBackgroundColorWithViewColor: Bool = true
-        
         public var offset: CGFloat = 20
         
         public var inset: CGFloat = 10
@@ -38,17 +36,31 @@ extension Tooltip {
         
         public var cornerRadius: CGFloat = 5.0
         
-        public var animationDuration: CGFloat = 0.25
+        public var animationConfiguration: AnimationConfiguration = AnimationConfiguration()
         
-        public var animationDelay: CGFloat = 0.0
-        
-        public var animationOptions: UIView.AnimationOptions = [.curveEaseOut]
+        public var shadowConfiguration: ShadowConfiguration = ShadowConfiguration()
         
         public var dismissAutomatically: Bool = true
         
         public var timeToDimiss: TimeInterval = 2.5
         
         public init() {}
+    }
+    
+    public class ShadowConfiguration {
+        public var shadowColor: CGColor = UIColor.black.withAlphaComponent(0.60).cgColor
+        
+        public var shadowOffset: CGSize = CGSize(width: 0, height: 2)
+        
+        public var shadowOpacity: Float = 0.8
+    }
+    
+    public class AnimationConfiguration {
+        public var animationDuration: CGFloat = 0.25
+        
+        public var animationDelay: CGFloat = 0.0
+        
+        public var animationOptions: UIView.AnimationOptions = [.curveEaseOut]
     }
 }
 
