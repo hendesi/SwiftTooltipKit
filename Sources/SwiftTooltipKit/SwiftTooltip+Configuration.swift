@@ -25,7 +25,7 @@
 import UIKit
 
 extension Tooltip {
-    class ToolTipConfiguration {
+    public class ToolTipConfiguration {
         public var backgroundColor: UIColor = .darkGray
         
         public var alignBackgroundColorWithViewColor: Bool = true
@@ -47,6 +47,8 @@ extension Tooltip {
         public var dismissAutomatically: Bool = true
         
         public var timeToDimiss: TimeInterval = 2.5
+        
+        public init() {}
     }
 }
 

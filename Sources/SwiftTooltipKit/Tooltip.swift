@@ -122,7 +122,10 @@ public class Tooltip: UIView {
         
         contentView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(contentView)
-        contentView.pinToSuperviewEdges()
+        contentView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        contentView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        contentView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        contentView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         
         contentView.setNeedsLayout()
         contentView.layoutIfNeeded()
@@ -272,7 +275,7 @@ public class Tooltip: UIView {
         }
     }
     
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
 
         contentView.layoutIfNeeded()
@@ -397,7 +400,7 @@ public class Tooltip: UIView {
        
     }
     
-    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+    public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         if !self.bounds.contains(point) {
             dismiss()
             return false

@@ -24,6 +24,21 @@
 #if canImport(UIKit)
 import UIKit
 
+extension UIApplication {
+    static func getTopViewController(base: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
+        if let nav = base as? UINavigationController {
+            return getTopViewController(base: nav.visibleViewController)
+
+        } else if let tab = base as? UITabBarController, let selected = tab.selectedViewController {
+            return getTopViewController(base: selected)
+
+        } else if let presented = base?.presentedViewController {
+            return getTopViewController(base: presented)
+        }
+        return base
+    }
+}
+
 extension Array where Element: Equatable {
     func remove(_ element: Element) -> Self {
         var mutableCopy = self
@@ -51,40 +66,24 @@ public extension UIView {
     
     func tooltip(_ view: UIView, orientation: Tooltip.TipOrientation, configuration: Tooltip.ToolTipConfiguration = Tooltip.ToolTipConfiguration()) {
         guard !hasActiveTooltip else { return }
-        let toolTip = Tooltip(view: view, embeddedView: self, orientation: orientation, configuration: configuration)
+        let toolTip = Tooltip(view: view, embeddedView: self, configuration: configuration, orientation: orientation)
         
         UIApplication.shared.keyWindow?.addSubview(toolTip)
     }
     
     func tooltip(_ text: String, orientation: Tooltip.TipOrientation, configuration: Tooltip.ToolTipConfiguration = Tooltip.ToolTipConfiguration()) {
         guard !hasActiveTooltip else { return }
-        let label = UILabel().apply {
-            $0.textAlignment = .center
-            $0.textColor = .white
-            $0.font = .systemFont(ofSize: 14, weight: .medium)
-            $0.numberOfLines = 0
-            $0.text = text
-            $0.preferredMaxLayoutWidth = 150
-        }
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.numberOfLines = 0
+        label.text = text
+        label.preferredMaxLayoutWidth = 150
         
-        let toolTip = Tooltip(view: label, embeddedView: self, orientation: orientation, configuration: configuration)
+        let toolTip = Tooltip(view: label, embeddedView: self, configuration: configuration, orientation: orientation)
         
         UIApplication.shared.keyWindow?.addSubview(toolTip)
-    }
-    
-    func showTooltip(with text: String) {
-        guard !hasActiveTooltip else { return }
-        let label = UILabel().apply {
-            $0.textAlignment = .center
-            $0.textColor = .white
-            $0.font = .systemFont(ofSize: 14, weight: .medium)
-            $0.numberOfLines = 0
-            $0.text = text
-            $0.preferredMaxLayoutWidth = 150
-        }
-    
-        let tooltip = Tooltip(view: label, embeddedView: self, orientation: .left)
-        UIApplication.shared.keyWindow?.addSubview(tooltip)
     }
 }
 
