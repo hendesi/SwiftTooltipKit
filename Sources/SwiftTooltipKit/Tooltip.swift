@@ -37,16 +37,17 @@ public class Tooltip: UIView {
     
     public private(set) var contentView: UIView!
     
-    private var presentingViewFrame: CGRect {
-        guard let presentingView = presentingView else { return .zero }
-        return presentingView.convert(presentingView.bounds, to: UIApplication.getTopViewController()!.view)
-    }
-    
     public private(set) var presentingView: UIView?
     
     public private(set) var configuration: ToolTipConfiguration!
     
     public private(set) var orientation: TipOrientation = .top
+    
+    private var presentingViewFrame: CGRect {
+        guard let presentingView = presentingView,
+                let topVC = UIApplication.getTopViewController() else { return .zero }
+        return presentingView.convert(presentingView.bounds, to: topVC.view)
+    }
     
     private var adjustmentTypes: Set<AdjustmentType> = []
     
