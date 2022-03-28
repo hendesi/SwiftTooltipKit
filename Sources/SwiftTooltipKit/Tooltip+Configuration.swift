@@ -24,7 +24,7 @@
 #if canImport(UIKit)
 import UIKit
 
-extension Tooltip {
+public extension Tooltip {
     /// `TooltipConfiguration` allows to customize a `Tooltip` according to the user's preferences.
     public class ToolTipConfiguration {
         /// The background color of the `Tooltip` object. Defaults to `.darkGray`.

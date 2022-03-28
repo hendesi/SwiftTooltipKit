@@ -27,7 +27,7 @@ import UIKit
 
 public class Tooltip: UIView {
     
-    public enum TipOrientation {
+    public enum Orientation {
         case top, bottom, left, right
     }
     
@@ -41,7 +41,7 @@ public class Tooltip: UIView {
     
     public private(set) var configuration: ToolTipConfiguration!
     
-    public private(set) var orientation: TipOrientation = .top
+    public private(set) var orientation: Orientation = .top
     
     private var presentingViewFrame: CGRect {
         guard let presentingView = presentingView,
@@ -73,11 +73,11 @@ public class Tooltip: UIView {
         }
     }
     
-    private var remainingOrientations: [TipOrientation] = [.top, .bottom, .right, .left]
+    private var remainingOrientations: [Orientation] = [.top, .bottom, .right, .left]
     
-    private var nextOrientation: TipOrientation {
+    private var nextOrientation: Orientation {
         
-        var rndElement: TipOrientation {
+        var rndElement: Orientation {
             remainingOrientations.randomElement() ?? .top
         }
         
@@ -105,21 +105,21 @@ public class Tooltip: UIView {
         orientation == .left || orientation == .right
     }
     
-    public convenience init(view: UIView, presentingView: UIView, orientation: TipOrientation, configuration: ((ToolTipConfiguration) -> ToolTipConfiguration)) {
+    public convenience init(view: UIView, presentingView: UIView, orientation: Orientation, configuration: ((ToolTipConfiguration) -> ToolTipConfiguration)) {
         self.init(view: view, presentingView: presentingView, orientation: orientation)
         self.configuration = configuration(ToolTipConfiguration())
         
         setup()
     }
     
-    public convenience init(view: UIView, presentingView: UIView, orientation: TipOrientation, configuration: ToolTipConfiguration = ToolTipConfiguration()) {
+    public convenience init(view: UIView, presentingView: UIView, orientation: Orientation, configuration: ToolTipConfiguration = ToolTipConfiguration()) {
         self.init(view: view, presentingView: presentingView, orientation: orientation)
         self.configuration = configuration
         
         setup()
     }
     
-    fileprivate init(view: UIView, presentingView: UIView, orientation: TipOrientation) {
+    fileprivate init(view: UIView, presentingView: UIView, orientation: Orientation) {
         self.orientation = orientation
         self.contentView = view
         self.presentingView = presentingView
@@ -128,7 +128,7 @@ public class Tooltip: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented. Use convenience init instead.")
+        fatalError("init(coder:) has not been implemented. Use convenience initializers instead.")
     }
     
     private func setup() {
@@ -148,7 +148,7 @@ public class Tooltip: UIView {
         alpha = 0
         
         // show
-        show()
+//        present()
         
         // If configured, handles automatic dismissal
         handleAutomaticDismissalIfNedded()
@@ -157,6 +157,7 @@ public class Tooltip: UIView {
         layoutIfNeeded()
     }
     
+    /// Computes the original frame of the tooltip.
     private func computeFrame() {
         let viewSize = contentView.boundsOrIntrinsicContentSize
         
@@ -176,7 +177,12 @@ public class Tooltip: UIView {
         self.frame = validateRect(CGRect(x: origin.x, y: origin.y, width: viewSize.width, height: viewSize.height), adjustedX: origin.x, adjustedY: origin.y, orientation: orientation)
     }
     
-    private func validateRect(_ rect: CGRect, adjustedX: CGFloat, adjustedY: CGFloat, orientation: TipOrientation) -> CGRect {
+    /// Validates the tooltip frame and updates frame and/or orientation if it's necessary.
+    /// - Parameter rect: the rect that needs validation
+    /// - Parameter adjustedX: the x coordinate of the rect's origin
+    /// - Parameter adjustedY: the y coordinate of the rect's origin
+    /// - Parameter orientation: The current orientation of the tooltip.
+    private func validateRect(_ rect: CGRect, adjustedX: CGFloat, adjustedY: CGFloat, orientation: Orientation) -> CGRect {
         let screenBounds = UIScreen.main.bounds
         let globlSafeAreasInsets = UIApplication.shared.keyWindow!.safeAreaInsets
         let margin: CGFloat = 16
@@ -239,8 +245,8 @@ public class Tooltip: UIView {
         return CGRect(origin: CGPoint(x: adjustedX, y: adjustedY), size: rect.size)
     }
     
-    private var orientationsTried: Set<TipOrientation> = []
-    private func nextOrientation(for prevOrientation: TipOrientation) -> TipOrientation {
+    private var orientationsTried: Set<Orientation> = []
+    private func nextOrientation(for prevOrientation: Orientation) -> Orientation {
         switch prevOrientation {
         case .top:
             orientationsTried.insert(.top)
@@ -274,16 +280,19 @@ public class Tooltip: UIView {
         contentView.layoutIfNeeded()
         
         computeFrame()
-        drawToolTip(self.bounds)
-        print(contentView.intrinsicContentSize)
+        drawToolTip()
     }
     
-    private func drawToolTip(_ rect :CGRect) {
+    /*
+     Draws the rect of the tooltip
+     */
+    private func drawToolTip() {
+        let rect = self.bounds
         let inset = configuration.inset
         let roundRect = CGRect(x: rect.minX - inset, y: rect.minY - inset, width: rect.width + inset * 2, height: rect.height + inset * 2)
         let roundRectBez = UIBezierPath(roundedRect: roundRect, cornerRadius: 5.0)
         
-        let trianglePath = drawTip(rect)
+        let trianglePath = drawTip()
         roundRectBez.append(trianglePath)
         roundRectBez.lineWidth = 2
         
@@ -291,7 +300,10 @@ public class Tooltip: UIView {
         self.layer.insertSublayer(shape, at: 0)
     }
     
-    private func drawTip(_ rect: CGRect) -> UIBezierPath {
+    /*
+     Draws the tip of the tooltip fitting the specified orientation
+     */
+    private func drawTip() -> UIBezierPath {
         let tipPath = UIBezierPath()
         let tipSize = configuration.tipSize
         let inset = configuration.inset
@@ -357,7 +369,8 @@ public class Tooltip: UIView {
         return shape
     }
     
-    private func dismiss() {
+    /// Dismisses the tooltip.
+    public func dismiss() {
         UIView.animate(
             withDuration: configuration.animationConfiguration.animationDuration,
             delay: configuration.animationConfiguration.animationDelay,
@@ -372,7 +385,8 @@ public class Tooltip: UIView {
         )
     }
     
-    private func show() {
+    /// Presents the tooltip.
+    public func present() {
         UIView.animate(
             withDuration: configuration.animationConfiguration.animationDuration,
             delay: configuration.animationConfiguration.animationDelay,
