@@ -25,6 +25,8 @@
 import Foundation
 import UIKit
 
+fileprivate let TooltipLayerIdentifier: String = "toolTipID"
+
 public class Tooltip: UIView {
     
     public enum Orientation {
@@ -139,22 +141,13 @@ public class Tooltip: UIView {
         contentView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
         contentView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         
-        contentView.setNeedsLayout()
-        contentView.layoutIfNeeded()
-        
         backgroundColor = configuration.backgroundColor
         
         // animate showing
         alpha = 0
         
-        // show
-//        present()
-        
         // If configured, handles automatic dismissal
         handleAutomaticDismissalIfNedded()
-        
-        setNeedsLayout()
-        layoutIfNeeded()
     }
     
     /// Computes the original frame of the tooltip.
@@ -269,8 +262,8 @@ public class Tooltip: UIView {
     
     private func handleAutomaticDismissalIfNedded() {
         guard configuration.dismissAutomatically else { return }
-        Timer.scheduledTimer(withTimeInterval: configuration.timeToDimiss, repeats: false, block: { [unowned self] _ in
-            self.dismiss()
+        Timer.scheduledTimer(withTimeInterval: configuration.timeToDimiss, repeats: false, block: { [weak self] _ in
+            self?.dismiss()
         })
     }
     
@@ -287,6 +280,8 @@ public class Tooltip: UIView {
      Draws the rect of the tooltip
      */
     private func drawToolTip() {
+        // remove previously added layers to prevent double drawing
+        self.layer.sublayers?.removeAll(where: { $0.name == TooltipLayerIdentifier })
         let rect = self.bounds
         let inset = configuration.inset
         let roundRect = CGRect(x: rect.minX - inset, y: rect.minY - inset, width: rect.width + inset * 2, height: rect.height + inset * 2)
@@ -366,6 +361,7 @@ public class Tooltip: UIView {
         shape.shadowOffset = configuration.shadowConfiguration.shadowOffset
         shape.shadowRadius = configuration.cornerRadius
         shape.shadowOpacity = configuration.shadowConfiguration.shadowOpacity
+        shape.name = TooltipLayerIdentifier
         return shape
     }
     
