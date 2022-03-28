@@ -24,7 +24,7 @@
 #if canImport(UIKit)
 import UIKit
 
-extension UIApplication {
+internal extension UIApplication {
     static func getTopViewController(base: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
         if let nav = base as? UINavigationController {
             return getTopViewController(base: nav.visibleViewController)
@@ -39,7 +39,7 @@ extension UIApplication {
     }
 }
 
-extension Array where Element: Equatable {
+internal extension Array where Element: Equatable {
     func remove(_ element: Element) -> Self {
         var mutableCopy = self
         for (index, ele) in mutableCopy.enumerated() {
@@ -52,26 +52,39 @@ extension Array where Element: Equatable {
     }
 }
 
-public extension UIView {
-    var boundsOrIntrinsicContentSize: CGSize {
+extension UIView {
+    internal var boundsOrIntrinsicContentSize: CGSize {
         return self.bounds.size != .zero ? self.bounds.size : self.intrinsicContentSize
     }
     
-    var hasActiveTooltip: Bool {
+    /// Returns true, if the calling UIView has an active tooltip.
+    /// True if there is currently a tooltip presented that has the calling view as `presentingView`.
+    public var hasActiveTooltip: Bool {
         guard let activeTooltips = UIApplication.shared.keyWindow?.subviews.filter({ $0 is Tooltip }),
                 !activeTooltips.isEmpty else { return false }
         
         return activeTooltips.compactMap { $0 as? Tooltip }.contains(where: { $0.presentingView == self })
     }
     
-    func tooltip(_ view: UIView, orientation: Tooltip.TipOrientation, configuration: Tooltip.ToolTipConfiguration = Tooltip.ToolTipConfiguration()) {
+    /// Presents a tooltip to the calling view with a given view, orientation and configuration.
+    ///
+    /// - Parameter view    :The view that will be displayed within the tooltip
+    /// - Parameter orientation: The placement of the tooltip in relation to the presenting view
+    /// - Parameter configuration: The configuration allowing to customize the tooltip
+    public func tooltip(_ view: UIView, orientation: Tooltip.Orientation, configuration: Tooltip.ToolTipConfiguration = Tooltip.ToolTipConfiguration()) {
         guard !hasActiveTooltip else { return }
         let toolTip = Tooltip(view: view, presentingView: self, orientation: orientation, configuration: configuration)
         
         UIApplication.shared.keyWindow?.addSubview(toolTip)
+        toolTip.present()
     }
     
-    func tooltip(_ text: String, orientation: Tooltip.TipOrientation, configuration: Tooltip.ToolTipConfiguration = Tooltip.ToolTipConfiguration()) {
+    /// Presents a tooltip to the calling view with a given text, orientation and configuration.
+    ///
+    /// - Parameter text    :The text that will be displayed within the tooltip
+    /// - Parameter orientation: The placement of the tooltip in relation to the presenting view
+    /// - Parameter configuration: The configuration allowing to customize the tooltip
+    public func tooltip(_ text: String, orientation: Tooltip.Orientation, configuration: Tooltip.ToolTipConfiguration = Tooltip.ToolTipConfiguration()) {
         guard !hasActiveTooltip else { return }
         let label = UILabel()
         label.textAlignment = configuration.labelConfiguration.textAlignment
@@ -84,8 +97,47 @@ public extension UIView {
         let toolTip = Tooltip(view: label, presentingView: self, orientation: orientation, configuration: configuration)
         
         UIApplication.shared.keyWindow?.addSubview(toolTip)
+        
+        toolTip.present()
+    }
+    
+    /// Presents a tooltip to the calling view with a given view, orientation and configuration closure.
+    ///
+    /// - Parameter view    :The view that will be displayed within the tooltip
+    /// - Parameter orientation: The placement of the tooltip in relation to the presenting view
+    /// - Parameter configuration: A configuration closure allowing to customize the tooltip.
+    public func tooltip(_ view: UIView, orientation: Tooltip.Orientation, configuration: ((Tooltip.ToolTipConfiguration) -> Tooltip.ToolTipConfiguration)) {
+        tooltip(view, orientation: orientation, configuration: configuration(Tooltip.ToolTipConfiguration()))
+    }
+    
+    /// Presents a tooltip with a given text, orientation and configuration closure.
+    ///
+    /// - Parameter text    :The view that will be displayed within the tooltip
+    /// - Parameter orientation: The placement of the tooltip in relation to the presenting view
+    /// - Parameter configuration: A configuration closure allowing to customize the tooltip.
+    public func tooltip(_ text: String, orientation: Tooltip.Orientation, configuration: ((Tooltip.ToolTipConfiguration) -> Tooltip.ToolTipConfiguration)) {
+        tooltip(text, orientation: orientation, configuration: configuration(Tooltip.ToolTipConfiguration()))
     }
 }
 
-
+extension Tooltip {
+    
+    /// Presents a tooltip to the calling view with a given view, orientation and configuration closure.
+    ///
+    /// - Parameter view    :The view that will be displayed within the tooltip
+    /// - Parameter orientation: The placement of the tooltip in relation to the presenting view
+    /// - Parameter configuration: A configuration closure allowing to customize the tooltip.
+    class func show(with view: UIView, presentingView: UIView, orientation: Tooltip.Orientation, configuration: Tooltip.ToolTipConfiguration) {
+        presentingView.tooltip(view, orientation: orientation, configuration: configuration)
+    }
+    
+    /// Presents a tooltip to the calling view with a given text, orientation and configuration.
+    ///
+    /// - Parameter text    :The text that will be displayed within the tooltip
+    /// - Parameter orientation: The placement of the tooltip in relation to the presenting view
+    /// - Parameter configuration: The configuration allowing to customize the tooltip
+    class func show(with text: String, presentingView: UIView, orientation: Tooltip.Orientation, configuration: Tooltip.ToolTipConfiguration) {
+        presentingView.tooltip(text, orientation: orientation, configuration: configuration)
+    }
+}
 #endif

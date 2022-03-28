@@ -1,11 +1,13 @@
 import XCTest
 @testable import SwiftTooltipKit
 
+
+// TODO: Add meaningful tests
 final class SwiftTooltipKitTests: XCTestCase {
     func testExample() throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(SwiftTooltipKit().text, "Hello, World!")
+        //        XCTAssertEqual(SwiftTooltipKit().text, "Hello, World!")
     }
 }
