@@ -21,6 +21,12 @@ class ViewController: UIViewController {
     }()
     
     let buttonColors: [UIColor] = [.purple, .blue, .cyan, .green, .orange]
+    
+    var smallTooltipConfig: Tooltip.ToolTipConfiguration = {
+        let smalltoolTipConfig = Tooltip.ToolTipConfiguration()
+        smalltoolTipConfig.labelConfiguration.preferredMaxLayoutWidth = 100
+        return smalltoolTipConfig
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,9 +60,13 @@ class ViewController: UIViewController {
         case 0:
             sender.tooltip("A tootltip with top orientation", orientation: .top)
         case 1:
-            sender.tooltip("A tootltip with left orientation", orientation: .left)
+            let imageView = UIImageView()
+            imageView.image = UIImage(systemName: "heart.fill")!.withRenderingMode(.alwaysTemplate)
+            imageView.tintColor = .red
+            sender.tooltip(imageView, orientation: .right)
+            sender.tooltip("Display custom views in the tooltip", orientation: .left, configuration: smallTooltipConfig)
         case 2:
-            sender.tooltip("A tootltip with right orientation and custom configuration", orientation: .left, configuration: { configuration in
+            sender.tooltip("A tootltip with custom configuration", orientation: .top, configuration: { configuration in
                 configuration.backgroundColor = sender.backgroundColor!
                 configuration.cornerRadius = 0
                 configuration.animationConfiguration.animationDuration = 1.25
@@ -65,9 +75,9 @@ class ViewController: UIViewController {
                 return configuration
             })
         case 3:
-            break
+            sender.tooltip("Original .left Orientation is updated automatically because of layout constraints", orientation: .left)
         case 4:
-            break
+            sender.tooltip("Define the width of a tooltip dynamically", orientation: .left, configuration: smallTooltipConfig)
         default:
             break
         }

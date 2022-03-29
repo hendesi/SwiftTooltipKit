@@ -110,9 +110,9 @@ extension UIView {
         tooltip(view, orientation: orientation, configuration: configuration(Tooltip.ToolTipConfiguration()))
     }
     
-    /// Presents a tooltip with a given text, orientation and configuration closure.
+    /// Presents a tooltip to the calling view with a given text, orientation and configuration closure.
     ///
-    /// - Parameter text    :The view that will be displayed within the tooltip
+    /// - Parameter text    :The text that will be displayed within the tooltip
     /// - Parameter orientation: The placement of the tooltip in relation to the presenting view
     /// - Parameter configuration: A configuration closure allowing to customize the tooltip.
     public func tooltip(_ text: String, orientation: Tooltip.Orientation, configuration: ((Tooltip.ToolTipConfiguration) -> Tooltip.ToolTipConfiguration)) {
@@ -120,15 +120,34 @@ extension UIView {
     }
 }
 
-extension Tooltip {
+extension UIBarItem {
+    
+    // Taken from https://github.com/teodorpatras/EasyTipView/blob/8a9133085074c41119516a22b4223f79b8698b40/Sources/EasyTipView/UIKitExtensions.swift#L15
+    fileprivate var view: UIView? {
+        if let item = self as? UIBarButtonItem, let customView = item.customView {
+            return customView
+        }
+        return self.value(forKey: "view") as? UIView
+    }
+    
+    /// Presents a tooltip to the calling view with a given view, orientation and configuration.
+    ///
+    /// - Parameter view    :The view that will be displayed within the tooltip
+    /// - Parameter orientation: The placement of the tooltip in relation to the presenting view
+    /// - Parameter configuration: The configuration allowing to customize the tooltip
+    public func tooltip(_ view: UIView, orientation: Tooltip.Orientation, configuration: Tooltip.ToolTipConfiguration = Tooltip.ToolTipConfiguration()) {
+        guard let view = self.view else { return }
+        view.tooltip(view, orientation: orientation, configuration: configuration)
+    }
     
     /// Presents a tooltip to the calling view with a given view, orientation and configuration closure.
     ///
     /// - Parameter view    :The view that will be displayed within the tooltip
     /// - Parameter orientation: The placement of the tooltip in relation to the presenting view
     /// - Parameter configuration: A configuration closure allowing to customize the tooltip.
-    class func show(with view: UIView, presentingView: UIView, orientation: Tooltip.Orientation, configuration: Tooltip.ToolTipConfiguration) {
-        presentingView.tooltip(view, orientation: orientation, configuration: configuration)
+    public func tooltip(_ view: UIView, orientation: Tooltip.Orientation, configuration: ((Tooltip.ToolTipConfiguration) -> Tooltip.ToolTipConfiguration)) {
+        guard let view = self.view else { return }
+        view.tooltip(view, orientation: orientation, configuration: configuration)
     }
     
     /// Presents a tooltip to the calling view with a given text, orientation and configuration.
@@ -136,8 +155,20 @@ extension Tooltip {
     /// - Parameter text    :The text that will be displayed within the tooltip
     /// - Parameter orientation: The placement of the tooltip in relation to the presenting view
     /// - Parameter configuration: The configuration allowing to customize the tooltip
-    class func show(with text: String, presentingView: UIView, orientation: Tooltip.Orientation, configuration: Tooltip.ToolTipConfiguration) {
-        presentingView.tooltip(text, orientation: orientation, configuration: configuration)
+    public func tooltip(_ text: String, orientation: Tooltip.Orientation, configuration: Tooltip.ToolTipConfiguration = Tooltip.ToolTipConfiguration()) {
+        guard let view = self.view else { return }
+        view.tooltip(text, orientation: orientation, configuration: configuration)
+    }
+    
+    /// Presents a tooltip to the calling view with a given text, orientation and configuration closure.
+    ///
+    /// - Parameter text    :The text that will be displayed within the tooltip
+    /// - Parameter orientation: The placement of the tooltip in relation to the presenting view
+    /// - Parameter configuration: A configuration closure allowing to customize the tooltip.
+    public func tooltip(_ text: String, orientation: Tooltip.Orientation, configuration: ((Tooltip.ToolTipConfiguration) -> Tooltip.ToolTipConfiguration)) {
+        guard let view = self.view else { return }
+        view.tooltip(text, orientation: orientation, configuration: configuration)
     }
 }
+
 #endif

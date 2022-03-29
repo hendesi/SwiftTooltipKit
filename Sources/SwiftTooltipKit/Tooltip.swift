@@ -27,7 +27,7 @@ import UIKit
 
 fileprivate let TooltipLayerIdentifier: String = "toolTipID"
 
-public class Tooltip: UIView {
+open class Tooltip: UIView {
     
     public enum Orientation {
         case top, bottom, left, right
@@ -129,7 +129,7 @@ public class Tooltip: UIView {
         super.init(frame: .zero)
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented. Use convenience initializers instead.")
     }
     
@@ -267,7 +267,7 @@ public class Tooltip: UIView {
         })
     }
     
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         
         contentView.layoutIfNeeded()
@@ -366,7 +366,7 @@ public class Tooltip: UIView {
     }
     
     /// Dismisses the tooltip.
-    public func dismiss() {
+    open func dismiss() {
         UIView.animate(
             withDuration: configuration.animationConfiguration.animationDuration,
             delay: configuration.animationConfiguration.animationDelay,
@@ -382,7 +382,7 @@ public class Tooltip: UIView {
     }
     
     /// Presents the tooltip.
-    public func present() {
+    open func present() {
         UIView.animate(
             withDuration: configuration.animationConfiguration.animationDuration,
             delay: configuration.animationConfiguration.animationDelay,
