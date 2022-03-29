@@ -1,9 +1,25 @@
 //
 //  ViewController.swift
-//  SwiftTooltipDemo
 //
-//  Created by Felix Desiderato on 28.03.22.
+// Copyright (c) 2022 Felix Desiderato
 //
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 import UIKit
 import SwiftTooltipKit
@@ -34,11 +50,12 @@ class ViewController: UIViewController {
         view.addSubview(buttonStackview)
         buttonStackview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 90).activate()
         buttonStackview.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
-//        buttonStackview.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50).activate()
-//        buttonStackview.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50).activate()
         buttonStackview.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -90).activate()
         
         populateView()
+        
+        let item = UIBarButtonItem(title: "Show", style: .done, target: self, action: #selector(didPressBarButton(_:)))
+        self.navigationItem.setRightBarButton(item, animated: true)
     }
 
     private func populateView() {
@@ -81,6 +98,10 @@ class ViewController: UIViewController {
         default:
             break
         }
+    }
+    
+    @objc func didPressBarButton(_ sender: UIBarButtonItem) {
+        sender.tooltip("BarButtons are also supported", orientation: .bottom)
     }
 
 }

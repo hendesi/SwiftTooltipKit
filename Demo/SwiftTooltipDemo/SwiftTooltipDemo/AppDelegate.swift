@@ -4,6 +4,8 @@
 //
 //  Created by Felix Desiderato on 28.03.22.
 //
+//  Copyright (c) 2022 Felix Desiderato. All rights reserved.
+//
 
 import UIKit
 
