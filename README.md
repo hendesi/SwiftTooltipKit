@@ -2,9 +2,9 @@
 
 [![Swift](https://github.com/hendesi/SwiftTooltipKit/actions/workflows/swift.yml/badge.svg)](https://github.com/hendesi/SwiftTooltipKit/actions/workflows/swift.yml) [![Swift Version](https://img.shields.io/badge/Swift-5.5-green.svg)](https://www.swift.org) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 
-| Syntax | Description |
-| --- | ----------- |
+
 | ![2022-03-29 10 59 32](https://user-images.githubusercontent.com/23266326/160580656-c42cfd99-f8c0-48b7-9a45-60b5a326e32e.gif) | ![Simulator Screen Shot - iPod touch (7th generation) - 2022-03-29 at 11 36 25](https://user-images.githubusercontent.com/23266326/160581933-f8e5da9f-3084-4d0a-8f3a-456ef18fd949.png) |
+| --- | ----------- |
 
 # Description
 SwiftTooltipKit is written in Swift and offers customizable tooltips out-of-the-box for iOS projects. It is easy to setup, light-weight and compatible with any project with or above iOS v8.
