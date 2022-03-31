@@ -26,7 +26,9 @@ import UIKit
 
 public extension Tooltip {
     /// `TooltipConfiguration` allows to customize a `Tooltip` according to the user's preferences.
-    public class ToolTipConfiguration {
+    class ToolTipConfiguration {
+        /// Specifies whether the tip is be shown.
+        public var showTip: Bool = true
         /// The background color of the `Tooltip` object. Defaults to `.darkGray`.
         public var backgroundColor: UIColor = .darkGray
         /// The offset of the tooltip to the view it belongs to. Defaults to `20`.
@@ -43,8 +45,8 @@ public extension Tooltip {
         public var shadowConfiguration: ShadowConfiguration = ShadowConfiguration()
         /// The configuration for the tooltip if it is displayed by calling `tooltip(_ text: String, ...)`. Refer to `LabelConfiguration` for default settings.
         public var labelConfiguration: LabelConfiguration = LabelConfiguration()
-        /// Boolean value indicating if the tooltip is automatically dismissed after `timeToDimiss` time interval. Defaults to `true`
-        public var dismissAutomatically: Bool = true
+        /// Boolean value indicating if the tooltip is automatically dismissed after `timeToDimiss` time interval. Defaults to `false`
+        public var dismissAutomatically: Bool = false
         /// If `dismissAutomatically`is set to true, this can be used to set the time interval after which the tooltip is dismissed. Defaults to `2.5` seconds.
         public var timeToDimiss: TimeInterval = 2.5
         /// Default init.
@@ -52,7 +54,7 @@ public extension Tooltip {
     }
     
     /// `ShadowConfiguration` contains properties that allow to customize the shadow properties of the tooltip.
-    public class ShadowConfiguration {
+    class ShadowConfiguration {
         /// The color of th shadow. Defaults to `UIColor.black.withAlphaComponent(0.60).cgColor`.
         public var shadowColor: CGColor = UIColor.black.withAlphaComponent(0.60).cgColor
         /// The offset of the shadow to the tooltip. Defaults to `CGSize(width: 0, height: 2)`.

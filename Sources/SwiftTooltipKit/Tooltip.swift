@@ -177,7 +177,13 @@ open class Tooltip: UIView {
     /// - Parameter orientation: The current orientation of the tooltip.
     private func validateRect(_ rect: CGRect, adjustedX: CGFloat, adjustedY: CGFloat, orientation: Orientation) -> CGRect {
         let screenBounds = UIScreen.main.bounds
-        let globlSafeAreasInsets = UIApplication.shared.keyWindow!.safeAreaInsets
+        let globlSafeAreasInsets: UIEdgeInsets
+        if #available(iOS 11.0, *) {
+            globlSafeAreasInsets = UIApplication.shared.keyWindow!.safeAreaInsets
+        } else {
+            // Fallback on earlier versions
+            globlSafeAreasInsets = .zero
+        }
         let margin: CGFloat = 16
         
         precondition(rect.width <= screenBounds.width - margin*2, warningMsg())
@@ -287,8 +293,10 @@ open class Tooltip: UIView {
         let roundRect = CGRect(x: rect.minX - inset, y: rect.minY - inset, width: rect.width + inset * 2, height: rect.height + inset * 2)
         let roundRectBez = UIBezierPath(roundedRect: roundRect, cornerRadius: 5.0)
         
-        let trianglePath = drawTip()
-        roundRectBez.append(trianglePath)
+        if configuration.showTip {
+            let trianglePath = drawTip()
+            roundRectBez.append(trianglePath)
+        }
         roundRectBez.lineWidth = 2
         
         let shape = createShapeLayer(roundRectBez.cgPath)
@@ -404,11 +412,15 @@ open class Tooltip: UIView {
     }
     
     public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        if !self.bounds.contains(point) {
-            dismiss()
-            return false
-        }
-        return true
+        dismiss()
+        return false
+        
+// TODO: Maybe enable later
+//        if !self.bounds.contains(point) {
+//            dismiss()
+//            return false
+//        }
+//        return true
     }
 }
 

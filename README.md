@@ -7,7 +7,7 @@
 | ![2022-03-29 10 59 32](https://user-images.githubusercontent.com/23266326/160580656-c42cfd99-f8c0-48b7-9a45-60b5a326e32e.gif) | ![Simulator Screen Shot - iPod touch (7th generation) - 2022-03-29 at 11 36 25](https://user-images.githubusercontent.com/23266326/160581933-f8e5da9f-3084-4d0a-8f3a-456ef18fd949.png) |
 
 # Description
-SwiftTooltipKit is written in Swift and offers customizable tooltips out-of-the-box for iOS projects. It is easy to setup, light-weight and compatible with any project with or above iOS v8.
+SwiftTooltipKit is written in Swift and offers customizable tooltips out-of-the-box for iOS projects. It is easy to setup, light-weight and compatible with any project with or above iOS v10.
 
 ## Features
 
@@ -15,7 +15,7 @@ SwiftTooltipKit is written in Swift and offers customizable tooltips out-of-the-
 - ✅ **Supports all orientations: `.top`, `.right`, `.left`, `.bottom`**
 - ✅ **Automatically chooses a fitting orientation if the selected orientation violates layout constraints**
 - ✅ **Supports the display of text or a custom `UIView`**
-- ✅ **Allows customization of animation, shadow and label properties**
+- ✅ **Allows customization of animation, shadow, label and general properties**
 
 ## Installation
 Currently SwiftTooltipKit only supports installation via Swift Package Manager. 
