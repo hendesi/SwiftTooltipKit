@@ -26,6 +26,7 @@ import Foundation
 import UIKit
 
 fileprivate let TooltipLayerIdentifier: String = "toolTipID"
+fileprivate let margin: CGFloat = 16
 
 open class Tooltip: UIView {
     
@@ -134,6 +135,8 @@ open class Tooltip: UIView {
     }
     
     private func setup() {
+        translatesAutoresizingMaskIntoConstraints = false
+        
         contentView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(contentView)
         contentView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
@@ -150,8 +153,26 @@ open class Tooltip: UIView {
         handleAutomaticDismissalIfNedded()
     }
     
+    /// If the custom view contains a label that has no `preferredMaxLayoutWidth` set, it can happen that its width > screen size width.
+    /// To prevent that artifically adjust the `preferredMaxLayoutWidth` to stay within bounds.
+    private func adjustPreferredMaxLayoutWidthIfPossible() {
+        let labels = contentView.subviews
+            .compactMap { $0 as? UILabel }
+        let filterLabels = labels.filter { $0.preferredMaxLayoutWidth == 0 ||
+                $0.preferredMaxLayoutWidth > UIScreen.main.bounds.width - margin*2 ||
+            $0.intrinsicContentSize.width > UIScreen.main.bounds.width - margin*2 }
+        filterLabels.forEach {
+            $0.preferredMaxLayoutWidth = UIScreen.main.bounds.width - margin*2
+        }
+    
+        contentView.setNeedsLayout()
+        contentView.layoutIfNeeded()
+    }
+    
     /// Computes the original frame of the tooltip.
     private func computeFrame() {
+        adjustPreferredMaxLayoutWidthIfPossible()
+        
         let viewSize = contentView.boundsOrIntrinsicContentSize
         
         let origin: CGPoint
@@ -184,7 +205,6 @@ open class Tooltip: UIView {
             // Fallback on earlier versions
             globlSafeAreasInsets = .zero
         }
-        let margin: CGFloat = 16
         
         precondition(rect.width <= screenBounds.width - margin*2, warningMsg())
         precondition(rect.height <= screenBounds.height - margin*2 - globlSafeAreasInsets.top - globlSafeAreasInsets.bottom, warningMsg())
