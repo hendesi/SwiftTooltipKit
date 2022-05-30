@@ -171,7 +171,7 @@ extension UIBarItem {
     }
 }
 
-extension ToolTip {
+extension Tooltip {
     /// Dismisses all tooltips that are currently shown on any sub view in the `keyWindow`.
     public static func dismissAllTooltips() {
         guard let activeTooltips = UIApplication.shared.keyWindow?.subviews.filter({ $0 is Tooltip }),
