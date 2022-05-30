@@ -401,6 +401,7 @@ open class Tooltip: UIView {
             options: configuration.animationConfiguration.animationOptions,
             animations: { [weak self] in
                 self?.alpha = 0
+                self?.configuration.onDismiss?()
             },
             completion: { [weak self] _ in
                 self?.isHidden = true
@@ -416,6 +417,7 @@ open class Tooltip: UIView {
             delay: configuration.animationConfiguration.animationDelay,
             options: configuration.animationConfiguration.animationOptions,
             animations: { [unowned self] in
+                self.configuration.onPresent?()
                 self.alpha = 1
             }
         )
@@ -423,7 +425,7 @@ open class Tooltip: UIView {
     
     private func warningMsg() -> String {
         """
-            LAYOUT ERROR:
+            LAYOUT WARNING:
         
             It seems that the view displayed as a tooltip is too large!
             Please make sure that size of the tooltip is valid and try again.
