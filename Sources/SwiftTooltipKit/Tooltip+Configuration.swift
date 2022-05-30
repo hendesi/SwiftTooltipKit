@@ -49,6 +49,10 @@ public extension Tooltip {
         public var dismissAutomatically: Bool = false
         /// If `dismissAutomatically`is set to true, this can be used to set the time interval after which the tooltip is dismissed. Defaults to `2.5` seconds.
         public var timeToDimiss: TimeInterval = 2.5
+        /// Optional Callback that is executed when the tooltip is dismissed.
+        public var onDismiss: (() -> Void)? = nil
+        /// Optional Callback that is executed when the tooltip is shown.
+        public var onPresent: (() -> Void)? = nil
         /// Default init.
         public init() {}
     }
