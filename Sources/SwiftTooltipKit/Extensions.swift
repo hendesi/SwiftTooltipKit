@@ -28,10 +28,10 @@ internal extension UIApplication {
     static func getTopViewController(base: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
         if let nav = base as? UINavigationController {
             return getTopViewController(base: nav.visibleViewController)
-
+            
         } else if let tab = base as? UITabBarController, let selected = tab.selectedViewController {
             return getTopViewController(base: selected)
-
+            
         } else if let presented = base?.presentedViewController {
             return getTopViewController(base: presented)
         }
@@ -61,7 +61,7 @@ extension UIView {
     /// True if there is currently a tooltip presented that has the calling view as `presentingView`.
     public var hasActiveTooltip: Bool {
         guard let activeTooltips = UIApplication.shared.keyWindow?.subviews.filter({ $0 is Tooltip }),
-                !activeTooltips.isEmpty else { return false }
+              !activeTooltips.isEmpty else { return false }
         
         return activeTooltips.compactMap { $0 as? Tooltip }.contains(where: { $0.presentingView == self })
     }
@@ -93,7 +93,7 @@ extension UIView {
         label.numberOfLines = 0
         label.text = text
         label.preferredMaxLayoutWidth = configuration.labelConfiguration.preferredMaxLayoutWidth
-
+        
         let toolTip = Tooltip(view: label, presentingView: self, orientation: orientation, configuration: configuration)
         
         UIApplication.shared.keyWindow?.addSubview(toolTip)
@@ -168,6 +168,16 @@ extension UIBarItem {
     public func tooltip(_ text: String, orientation: Tooltip.Orientation, configuration: ((Tooltip.ToolTipConfiguration) -> Tooltip.ToolTipConfiguration)) {
         guard let view = self.view else { return }
         view.tooltip(text, orientation: orientation, configuration: configuration)
+    }
+}
+
+extension Tooltip {
+    /// Dismisses all tooltips that are currently shown on any sub view in the `keyWindow`.
+    public static func dismissAll() {
+        guard let activeTooltips = UIApplication.shared.keyWindow?.subviews.filter({ $0 is Tooltip }),
+              !activeTooltips.isEmpty else { return }
+        
+        activeTooltips.compactMap { $0 as? Tooltip }.forEach { $0.dismiss() }
     }
 }
 

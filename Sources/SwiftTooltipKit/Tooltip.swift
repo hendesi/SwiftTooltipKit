@@ -434,15 +434,11 @@ open class Tooltip: UIView {
     }
     
     public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        dismiss()
-        return false
-        
-// TODO: Maybe enable later
-//        if !self.bounds.contains(point) {
-//            dismiss()
-//            return false
-//        }
-//        return true
+        if !self.bounds.contains(point) {
+            dismiss()
+            return false
+        }
+        return true
     }
 }
 
